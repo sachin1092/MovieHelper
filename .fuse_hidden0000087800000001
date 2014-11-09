@@ -1,0 +1,69 @@
+import urllib
+import json
+import webbrowser
+ 
+import sys
+
+replace = [".avi","1.4","5.1","DVDRip","BRRip", "XviD-Sam", "XviD","1CDRip","aXXo","[","]","(",")","{","}","{{","}}",
+    "x264","720p","StyLishSaLH (StyLish Release)","Free","DvDScr","MP3","HDRip","WebRip", "NLT-Release",
+    "ETRG","YIFY","StyLishSaLH","StyLish Release","TrippleAudio","EngHindiIndonesian",
+    "385MB","CooL GuY","a2zRG","x264","Hindi","AAC","AC3","MP3"," R6","HDRip","H264","ESub","AQOS",
+    "ALLiANCE","UNRATED","ExtraTorrentRG","BrRip","mkv","mpg","DiAMOND","UsaBitcom","AMIABLE", "WEB-DL",
+    "BRRIP","XVID","AbSurdiTy","DVDRiP","TASTE","BluRay","HR","COCAIN","_",".","BestDivX","MAXSPEED",
+    "Eng","500MB","FXG","Ac3","Feel","Subs","S4A","BDRip","FTW","Xvid","Noir","1337x","ReVoTT",
+    "GlowGaze","mp4","Unrated","hdrip","ARCHiViST","TheWretched","www","torrentfive","com",
+    "1080p","1080","SecretMyth","Kingdom","Release","RISES","DvDrip","ViP3R","RISES","BiDA","READNFO",
+    "HELLRAZ0R","tots","BeStDivX","UsaBit","FASM","NeroZ","576p","LiMiTED","Series","ExtraTorrent","DVDRIP","~",
+    "BRRiP","699MB","700MB","greenbud","B89","480p","AMX","007","DVDrip","h264","phrax","ENG","TODE","LiNE",
+    "XVid","sC0rp","PTpower","OSCARS","DXVA","MXMG","3LT0N","TiTAN","4PlayHD","HQ","HDRiP","MoH","MP4","BadMeetsEvil",
+    "XViD","3Li","PTpOWeR","3D","HSBS","CC","RiPS","WEBRip","R5","PSiG","'GokU61","GB","GokU61","NL","Rel","NL",
+    "PSEUDO","DVD","Rip","NeRoZ","EXTENDED","DVDScr","xvid","WarrLord","SCREAM","MERRY","XMAS","iMB","7o9",
+    "Exclusive","171","DiDee","v2","Hon3y","DvD","Nydic", "RARBG", "Mafiaking", "DVDR", "SHUMANOV", "-"
+
+    ]
+# extensions = [".3g2", ".3gp", ".asf", ".asx", ".avi", ".flv", ".m4v", ".mov", ".mp4", ".mpg", ".rm", ".swf", ".vob", ".wmv", ".aepx", ".ale", ".avp", ".avs", ".bdm", ".bik", ".bin", ".bsf", ".camproj", ".cpi", ".dash", ".divx", ".dmsm", ".dream", ".dvdmedia", ".dvr-ms", ".dzm", ".dzp", ".edl", ".f4v", ".fbr", ".fcproject", ".hdmov", ".imovieproj", ".ism", ".ismv", ".m2p", ".mkv", ".mod", ".moi", ".mpeg", ".mts", ".mxf", ".ogv", ".otrkey", ".pds", ".prproj", ".psh", ".r3d", ".rcproject", ".rmvb", ".scm", ".smil", ".snagproj", ".sqz", ".stx", ".swi", ".tix", ".trp", ".ts", ".veg", ".vf", ".vro", ".webm", ".wlmp", ".wtv", ".xvid", ".yuv", ".3gp2", ".3gpp", ".3p2", ".890", ".aaf", ".aec", ".aep", ".aetx", ".ajp", ".amc", ".amv", ".amx", ".arcut", ".arf", ".avb", ".avchd", ".avv", ".axm", ".bdmv", ".bdt3", ".bmc", ".bmk", ".camrec", ".ced", ".cine", ".cip", ".clpi", ".cmmp", ".cmmtpl", ".cmproj", ".cmrec", ".cst", ".d2v", ".d3v", ".dat", ".dce", ".dck", ".dcr", ".dcr", ".dir", ".dmsd", ".dmsd3d", ".dmss", ".dmx", ".dpa", ".dpg", ".dv", ".dv-avi", ".dvr", ".dvx", ".dxr", ".dzt", ".evo", ".eye", ".eyetv", ".ezt", ".f4p", ".fbz", ".fcp", ".ffm", ".flc", ".flh", ".fli", ".fpdx", ".ftc", ".gcs", ".gfp", ".gifv", ".gts", ".hdv", ".hkm", ".ifo", ".imovieproject", ".ircp", ".ismc", ".ivr", ".izz", ".izzy", ".jss", ".jts", ".jtv", ".kdenlive", ".lrv", ".m1pg", ".m21", ".m21", ".m2t", ".m2ts", ".m2v", ".mani", ".mgv", ".mj2", ".mjp", ".mk3d", ".mnv", ".mp21", ".mp21", ".mpgindex", ".mpl", ".mpls", ".mproj", ".mpv", ".mqv", ".msdvd", ".mse", ".mswmm", ".mtv", ".mvd", ".mve", ".mvp", ".mvp", ".mvy", ".mxv", ".ncor", ".nsv", ".nuv", ".nvc", ".ogm", ".ogx", ".pac", ".pgi", ".photoshow", ".piv", ".plproj", ".pmf", ".ppj", ".prel", ".pro", ".prtl", ".pxv", ".qtl", ".qtz", ".rcd", ".rdb", ".rec", ".rmd", ".rmp", ".rms", ".roq", ".rsx", ".rum", ".rv", ".rvid", ".rvl", ".sbk", ".scc", ".screenflow", ".sdv", ".sedprj", ".seq", ".sfvidcap", ".siv", ".smi", ".smi", ".smk", ".stl", ".svi", ".swt", ".tda3mt", ".thp", ".tivo", ".tod", ".tp", ".tp0", ".tpd", ".tpr", ".trec", ".tsp", ".ttxt", ".tvlayer", ".tvs", ".tvshow", ".usf", ".usm", ".vbc", ".vc1", ".vcpf", ".vcv", ".vdo", ".vdr", ".vep", ".vfz", ".vgz", ".viewlet", ".vlab", ".vp6", ".vp7", ".vpj", ".vsp", ".wcp", ".wmd", ".wmmp", ".wmx", ".wp3", ".wpl", ".wve", ".wvx", ".xej", ".xel", ".xesc", ".xfl", ".xlmv", ".y4m", ".zm1", ".zm2", ".zm3", ".zmv", ".264", ".3gpp2", ".3mm", ".60d", ".aet", ".anx", ".avc", ".avd", ".avs", ".awlive", ".axv", ".bdt2", ".bnp", ".box", ".bs4", ".bu", ".bvr", ".byu", ".camv", ".clk", ".cx3", ".dav", ".ddat", ".dif", ".dlx", ".dmb", ".dmsm3d", ".dnc", ".dv4", ".f4f", ".fbr", ".ffd", ".flx", ".gvp", ".h264", ".inp", ".int", ".irf", ".iva", ".ivf", ".jmv", ".k3g", ".ktn", ".lrec", ".lsx", ".lvix", ".m1v", ".m2a", ".m4u", ".meta", ".mjpg", ".modd", ".moff", ".moov", ".movie", ".mp2v", ".mp4.infovid", ".mp4v", ".mpe", ".mpl", ".mpsub", ".mvc", ".mvex", ".mys", ".osp", ".par", ".playlist", ".pns", ".pro4dvd", ".pro5dvd", ".proqc", ".pssd", ".pva", ".pvr", ".qt", ".qtch", ".qtindex", ".qtm", ".rp", ".rts", ".sbt", ".scn", ".sfd", ".sml", ".smv", ".spl", ".str", ".tdt", ".tid", ".tvrecording", ".vcr", ".vem", ".vft", ".vfw", ".vid", ".video", ".vix", ".vs4", ".vse", ".w32", ".wm", ".wot", ".xmv", ".yog", ".787", ".am", ".anim", ".aqt", ".bix", ".cel", ".cvc", ".db2", ".dsy", ".gl", ".gom", ".grasp", ".gvi", ".ismclip", ".ivs", ".kmv", ".lsf", ".m15", ".m4e", ".m75", ".mmv", ".mob", ".mpeg1", ".mpeg4", ".mpf", ".mpg2", ".mpv2", ".msh", ".mvb", ".nut", ".orv", ".pjs", ".pmv", ".psb", ".rmd", ".rmv", ".rts", ".scm", ".sec", ".ssf", ".ssm", ".tdx", ".vdx", ".viv", ".vivo", ".vp3", ".zeg"]
+# replace.append(extensions)
+
+def finder(name):
+    print "MovieLookUp"
+    print name
+    print type(name)
+    year=0
+    name=name.lower()
+    for y in range(1900,2015):
+        if str(y) in name:
+            name = name.replace(str(y)," ")
+            year = y
+            break
+    for value in replace:
+        name = name.replace(value.lower()," ")
+ 
+    name=name.lstrip()
+    name=name.rstrip()
+    print name
+    if year!=0:
+        url = "http://www.omdbapi.com/?t="+name+"&y="+str(year)
+        print url
+        response = urllib.urlopen(url).read()
+        return response
+        # jsonvalues = json.loads(response)
+        # if jsonvalues["Response"]=="True":
+        #     movieurl = "www.imdb.com/title/" + jsonvalues['imdbID']
+        #     #webbrowser.open_new_tab(movieurl)
+        #     print movieurl
+ 
+    else:
+        url = "http://www.omdbapi.com/?t="+name
+        print url
+        webbrowser.open_new_tab(url)
+        response = urllib.urlopen(url).read()
+        return response
+        # jsonvalues = json.loads(response)
+        # if jsonvalues["Response"]=="True":
+        #     movieurl = "www.imdb.com/title/" + jsonvalues['imdbID']
+        #     #webbrowser.open_new_tab(movieurl)
+        #     print movieurl
+ 
+# file = sys.argv[1].split("\\")[-1]
+#
+# finder(file)
