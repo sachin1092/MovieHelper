@@ -184,10 +184,19 @@ def getYear(text):
     return text[-2] + text[-1]
 
 
+<<<<<<< HEAD
 def startMain(names, app):
     # app = QApplication(sys.argv)
+=======
+def startMain(names):
+    app = QApplication(sys.argv)
+>>>>>>> 872890b928de84f1d8e3cfd4ddaba74fdace5dd1
     print names
     files.append(names)
     form1 = MainWindow()
     form1.show()
+<<<<<<< HEAD
     app.exec_()
+=======
+    sys.exit(app.exec_())
+>>>>>>> 872890b928de84f1d8e3cfd4ddaba74fdace5dd1

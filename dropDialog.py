@@ -176,6 +176,13 @@ class MainWindow(QMainWindow, mainGui.Ui_mainWindow):
         super(MainWindow, self).__init__(parent)
         self.setupUi(self)
 
+
+def startDialog():
+    app = QApplication(sys.argv)
+    main = droppableWidget()
+    main.show()
+    sys.exit(app.exec_())
+    
 app = QApplication(sys.argv)
 main = droppableWidget()
 main.show()
