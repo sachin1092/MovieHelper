@@ -9,7 +9,10 @@ Simply drag and drop a folder with movies to find details such as
 * Genre
 
 
+
 --
 
-Made using OMDb API - http://www.omdbapi.com/
+Made using OMDb API - http://www.omdbapi.com/ 
+
+--
 Python + Pyside Project

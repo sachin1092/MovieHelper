@@ -183,11 +183,10 @@ extensions = [".3g2", ".3gp", ".asf", ".asx", ".avi", ".flv", ".m4v", ".mov", ".
 def getYear(text):
     return text[-2] + text[-1]
 
-
-def startMain(names):
-    app = QApplication(sys.argv)
+def startMain(names, app):
+    # app = QApplication(sys.argv)
     print names
     files.append(names)
     form1 = MainWindow()
     form1.show()
-    sys.exit(app.exec_())
+    app.exec_()

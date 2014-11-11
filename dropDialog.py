@@ -166,7 +166,7 @@ class droppableWidget(QWidget):
     def newWindow(self, names):
         self.hide()
         import main
-        main.startMain(names)
+        main.startMain(names, app)
 
 
 
@@ -176,12 +176,13 @@ class MainWindow(QMainWindow, mainGui.Ui_mainWindow):
         super(MainWindow, self).__init__(parent)
         self.setupUi(self)
 
+
 def startDialog():
     app = QApplication(sys.argv)
     main = droppableWidget()
     main.show()
     sys.exit(app.exec_())
-
+    
 app = QApplication(sys.argv)
 main = droppableWidget()
 main.show()
