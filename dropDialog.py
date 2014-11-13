@@ -166,27 +166,30 @@ class droppableWidget(QWidget):
     def newWindow(self, names):
         self.hide()
         import main
-        main.startMain(names, app)
+        self.form2 = main.MainWindow(files=names)
+        self.form2.show()
 
 
 
-class MainWindow(QMainWindow, mainGui.Ui_mainWindow):
+# class MainWindow(QMainWindow, mainGui.Ui_mainWindow):
+#
+#     def __init__(self, parent=None):
+#         super(MainWindow, self).__init__(parent)
+#         self.setupUi(self)
 
-    def __init__(self, parent=None):
-        super(MainWindow, self).__init__(parent)
-        self.setupUi(self)
 
+# def startDialog():
+#     app = QApplication(sys.argv)
+#     main = droppableWidget()
+#     main.show()
+#     # app.exec_()
+#     sys.exit(app.exec_())
 
-def startDialog():
-    app = QApplication(sys.argv)
-    main = droppableWidget()
-    main.show()
-    sys.exit(app.exec_())
-    
 app = QApplication(sys.argv)
 main = droppableWidget()
 main.show()
 sys.exit(app.exec_())
+# app.exec_()
 
 
 

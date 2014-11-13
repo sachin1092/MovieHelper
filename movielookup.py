@@ -14,11 +14,11 @@ replace = [".avi", "1.4", "5.1", "Dual-Audio", "Hindi-English", "[DDR]", "DvDrip
            "1080p", "1080", "SecretMyth", "Kingdom", "Release", "RISES", "DvDrip", "ViP3R", "RISES", "BiDA", "READNFO",
            "HELLRAZ0R", "tots", "BeStDivX", "UsaBit", "FASM", "NeroZ", "576p", "LiMiTED", "Series", "ExtraTorrent",
            "DVDRIP", "~",
-           "BRRiP", "699MB", "700MB", "greenbud", "B89", "480p", "AMX", "007", "DVDrip", "h264", "phrax", "ENG", "TODE",
+           "BRRiP", "699MB", "700MB", "greenbud", "B89", "480p", "AMX", "007", "DVDrip", "h264", "phrax", "TODE",
            "LiNE",
            "XVid", "sC0rp", "PTpower", "OSCARS", "DXVA", "MXMG", "3LT0N", "TiTAN", "4PlayHD", "HQ", "HDRiP", "MoH",
            "MP4", "BadMeetsEvil",
-           "XViD", "3Li", "PTpOWeR", "3D", "HSBS", "CC", "RiPS", "WEBRip", "R5", "PSiG", "'GokU61", "GB", "GokU61",
+           "XViD", "3Li", "PTpOWeR", "3D", "HSBS", "RiPS", "WEBRip", "R5", "PSiG", "'GokU61", "GB", "GokU61",
            "NL", "Rel", "NL",
            "PSEUDO", "DVD", "Rip", "NeRoZ", "EXTENDED", "DVDScr", "xvid", "WarrLord", "SCREAM", "MERRY", "XMAS", "iMB",
            "7o9",
@@ -26,7 +26,7 @@ replace = [".avi", "1.4", "5.1", "Dual-Audio", "Hindi-English", "[DDR]", "DvDrip
 
 ]
 
-retry = ["cam", "imagine", "CharmeLeon", "sub", "dual", "audio", "+", "by", "team", "exd", "lish"
+retry = ["ahl07Sample.mp4", "moviesnhacks", "mastitorrents", "cd2Push", "bokutox", "fasamoo", "lkrg", "cam", "imagine", "CharmeLeon", "sub", "dual", "audio", "+", "by", "team", "exd", "lish", "uncut", "harshad", "mastitorrents", "rmvb", "mpeg", "classified", "br", "cd1", "cd2", "cd3", "files", "m4v", "ddr", "kamera", "ahl07", "hin+", "ashish7", "vyto", "current", "hd", "jap", "bugz", "E-Sub_xRG", "pre", "CC", "ENG", "chamee",
 ]
 
 def finder(name, delay=2):

@@ -9,6 +9,7 @@ import os
 
 from PySide.QtCore import *
 from PySide.QtGui import *
+from PyQt4 import QtCore as PyQtCore
 
 import mainGui
 import movielookup
@@ -46,6 +47,7 @@ class MainWindow(QMainWindow, mainGui.Ui_mainWindow):
             check = ""
             for t in tup:
                 check += t + " "
+            check = str(check).lower()
             if text in check:
                 listtoadd.append(tup)
         self.table_model.searchData(listtoadd)
@@ -85,7 +87,9 @@ class MainWindow(QMainWindow, mainGui.Ui_mainWindow):
         # for file in self.files:
         while len(movies) != 0:
             self.threadcollector.append(WorkerThread(movies.pop()))
-            self.connect(self.threadcollector[self.counter], SIGNAL("threadDone(QString)"), self.doThing, Qt.DirectConnection)
+            # self.threadcollector[self.counter].connect(self.doThing)
+            # self.connect(self.threadcollector[self.counter], SIGNAL("threadDone(QString)"), self.doThing, Qt.DirectConnection)
+            self.threadcollector[self.counter].progress.connect(self.doThing, Qt.QueuedConnection)
             self.threadcollector[self.counter].start()
             print "Starting thread", self.counter
             self.counter += 1
@@ -185,6 +189,9 @@ def getRating(text):
 
 
 class WorkerThread(QThread):
+
+    progress = Signal("QString")
+
     def __init__(self, text, parent=None):
         super(WorkerThread, self).__init__(parent)
         self.name = text
@@ -194,7 +201,8 @@ class WorkerThread(QThread):
         print self.name
         response = movielookup.finder(self.name)
         print response, self.name
-        self.emit(SIGNAL("threadDone(QString)"), response)
+        # self.emit(SIGNAL("threadDone(QString)"), response)
+        self.progress.emit(response)
         print "Thread finished>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 
 
@@ -255,13 +263,17 @@ def getYear(text):
     return text[-2] + text[-1]
 
 
-def startMain(names, app2):
-    app = app2
-    try:
-        app = QApplication(sys.argv)
-    except:
-        pass
-    print "names in main", names
-    form1 = MainWindow(files=names)
-    form1.show()
-    app.exec_()
+# def startMain(names, app):
+#     # app.quit()
+#     # app = app2
+#     # try:
+#     app = QApplication(sys.argv)
+#     # except:
+#     #     pass
+#     print "names in main", names
+#     form1 = MainWindow(files=names)
+#     form1.show()
+#     # try:
+#     sys.exit(app.exec_())
+#     # except:
+#     #     pass
