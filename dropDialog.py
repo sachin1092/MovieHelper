@@ -3,16 +3,13 @@
 
 import os
 
-import sip
+# import sip
 import sys
-sip.setapi('QString', 2)
-sip.setapi('QVariant', 2)
+# sip.setapi('QString', 2)
+# sip.setapi('QVariant', 2)
 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-import mainGui
-
-
 
 class droppableLabel(QLabel):
     fileDropped = pyqtSignal(list)

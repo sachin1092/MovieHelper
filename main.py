@@ -9,7 +9,6 @@ import os
 
 from PySide.QtCore import *
 from PySide.QtGui import *
-from PyQt4 import QtCore as PyQtCore
 
 import mainGui
 import movielookup
