@@ -1,7 +1,8 @@
 import urllib
 import json
+import time
 
-replace = [".avi", "1.4", "5.1", "[DDR]", "DvDrip-LW", "DVDRip", "BRRip", "XviD-Sam", "XviD", "1CDRip", "aXXo", "[", "]", "(", ")", "{", "}",
+replace = [".avi", "1.4", "5.1", "Dual-Audio", "Hindi-English", "[DDR]", "DvDrip-LW", "DVDRip", "BRRip", "XviD-Sam", "XviD", "1CDRip", "aXXo", "[", "]", "(", ")", "{", "}",
            "{{", "}}", "Blu-Ray", "anoxmous", "SilverRG", "SaMple-"
            "x264", "720p", "StyLishSaLH (StyLish Release)", "Free", "DvDScr", "MP3", "HDRip", "WebRip", "NLT-Release",
            "ETRG", "YIFY", "StyLishSaLH", "StyLish Release", "TrippleAudio", "EngHindiIndonesian",
@@ -25,14 +26,12 @@ replace = [".avi", "1.4", "5.1", "[DDR]", "DvDrip-LW", "DVDRip", "BRRip", "XviD-
 
 ]
 
-retry = ["cam", "imagine", "CharmeLeon", "sub"
+retry = ["cam", "imagine", "CharmeLeon", "sub", "dual", "audio", "+", "by", "team", "exd", "lish"
 ]
 
-def finder(name):
+def finder(name, delay=2):
     origname = name
-    print "MovieLookUp"
-    print name
-    print type(name)
+    print "MovieLookUp", name
     year = 0
     name = name.lower()
     for y in range(1900, 2015):
@@ -43,28 +42,46 @@ def finder(name):
     for value in replace:
         name = name.replace(value.lower(), " ")
 
+    name = name.replace("&", "and")
+
     name = name.lstrip()
     name = name.rstrip()
     print name
     if year != 0:
         url = "http://www.omdbapi.com/?t=" + name + "&y=" + str(year)
         print url
-        response = urllib.urlopen(url).read()
-        jsonvalues = json.loads(response)
+        try:
+            response = urllib.urlopen(url).read()
+            jsonvalues = json.loads(response)
+        except:
+            if delay < 10:
+                time.sleep(delay)
+                return finder(name, delay+1)
+            jsonvalues = "{\"Response\": \"False\", \"Error\":\"Network Error\"}"
+            return jsonvalues
         if jsonvalues["Response"] == "False":
             for val in retry:
                 if val.lower() in origname.lower():
                     name = name.replace(val.lower(), " ")
-                    finder(name)
+                    return finder(name)
+        print "returning"
         return response
     else:
         url = "http://www.omdbapi.com/?t=" + name
         print url
-        response = urllib.urlopen(url).read()
-        jsonvalues = json.loads(response)
+        try:
+            response = urllib.urlopen(url).read()
+            jsonvalues = json.loads(response)
+        except:
+            if delay < 10:
+                time.sleep(delay)
+                return finder(name, delay+1)
+            jsonvalues = "{\"Response\": \"False\", \"Error\":\"Network Error\"}"
+            return jsonvalues
         if jsonvalues["Response"] == "False":
             for val in retry:
                 if val.lower() in origname.lower():
                     name = name.replace(val.lower(), " ")
-                    finder(name)
+                    return finder(name)
+        print "returning"
         return response

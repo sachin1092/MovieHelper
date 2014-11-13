@@ -15,36 +15,102 @@ import movielookup
 
 
 class MainWindow(QMainWindow, mainGui.Ui_mainWindow):
-    def __init__(self, parent=None):
+
+    files = []
+
+    def __init__(self, files=[], parent=None):
         super(MainWindow, self).__init__(parent)
         self.setupUi(self)
+        self.completelist = []
+        self.threadcollector = []
+        self.table_model = None
+        self.counter = 0
+        self.maincounter = 0
+        self.failure = 0
+        self.total = 0
+        self.showMaximized()
+        self.files = files
         self.table_view = self.tvEverything
-        self.table_model = self.MyTableModel(self, (), self.header)
-        self.table_view.setModel(self.table_model)
-        self.table_view.horizontalHeader().setResizeMode(QHeaderView.Stretch)
-        self.table_view.setSortingEnabled(True)
+        self.leSearch.hide()
+        self.buttinClear.hide()
+        self.leSearch.textChanged.connect(self.perform_search)
+
         self.backButton.clicked.connect(self.anotherFolder)
         self.backButton.setText("Close")
-        self.startThread()
+        self.startThread(self.getNextFour())
+
+    def perform_search(self):
+        listtoadd = []
+        text = self.leSearch.text()
+        for tup in self.completelist:
+            check = ""
+            for t in tup:
+                check += t + " "
+            if text in check:
+                listtoadd.append(tup)
+        self.table_model.searchData(listtoadd)
+
+
+
+    def getNextFour(self):
+        mlist = []
+        if self.maincounter == 0 and len(self.files) == 0:
+            print "Finished"
+            self.allDone()
+
+            # return mlist
+        for i in range(3):
+            if i < len(self.files):
+                mlist.append(self.files.pop())
+        return mlist
 
     def anotherFolder(self):
         sys.exit(0)
 
     def allDone(self):
         self.progressBar.hide()
+        self.leSearch.show()
+        self.buttinClear.show()
+        print "Everything should be finished, total processed: ", self.counter
+        print "Processed and true: ", self.total
+        print "failure due to network: ", self.failure
+        # try:
+        #     for mthread in self.threadcollector:
+        #         mthread.terminate()
+        # except:
+        #     pass
 
-    def startThread(self):
-        self.workerThread = WorkerThread(files.pop())
-        self.connect(self.workerThread, SIGNAL("threadDone(QString)"), self.doThing, Qt.DirectConnection)
-        self.connect(self.workerThread, SIGNAL("allDone()"), self.allDone, Qt.DirectConnection)
-        self.workerThread.start()
+    def startThread(self, movies):
+        print "files", self.files
+        # for file in self.files:
+        while len(movies) != 0:
+            self.threadcollector.append(WorkerThread(movies.pop()))
+            self.connect(self.threadcollector[self.counter], SIGNAL("threadDone(QString)"), self.doThing, Qt.DirectConnection)
+            self.threadcollector[self.counter].start()
+            print "Starting thread", self.counter
+            self.counter += 1
+            self.maincounter += 1
+        print "after startthread"
 
     def doThing(self, text):
+        self.maincounter -= 1
+        if self.table_model is None:
+            self.table_model = self.MyTableModel(self, (), self.header)
+            self.table_view.setModel(self.table_model)
+            self.table_view.horizontalHeader().setResizeMode(QHeaderView.Stretch)
+            self.table_view.setSortingEnabled(True)
         jsonvalues = json.loads(text)
-        mtup = (jsonvalues["Title"], jsonvalues["imdbRating"], jsonvalues["Released"], jsonvalues["Runtime"],
-                jsonvalues["Genre"])
-        self.table_model.updateTableData(mtup)
-        self.startThread()
+        if jsonvalues["Response"] == "True":
+            self.total += 1
+            mtup = (jsonvalues["Title"], jsonvalues["imdbRating"], jsonvalues["Released"], jsonvalues["Runtime"],
+                    jsonvalues["Genre"])
+            self.completelist.append(mtup)
+            self.table_model.updateTableData(mtup)
+        else:
+            if jsonvalues["Error"] == "Network Error":
+                self.failure += 1
+
+        self.startThread(self.getNextFour())
 
     class MyTableModel(QAbstractTableModel):
         def __init__(self, parent, mylist, header, *args):
@@ -55,6 +121,12 @@ class MainWindow(QMainWindow, mainGui.Ui_mainWindow):
         def updateTableData(self, tup):
             self.emit(SIGNAL("layoutAboutToBeChanged()"))
             self.mylist.append(tup)
+            self.mylist = list(set(self.mylist))
+            self.emit(SIGNAL("layoutChanged()"))
+
+        def searchData(self, tup):
+            self.emit(SIGNAL("layoutAboutToBeChanged()"))
+            self.mylist = tup
             self.mylist = list(set(self.mylist))
             self.emit(SIGNAL("layoutChanged()"))
 
@@ -87,6 +159,8 @@ class MainWindow(QMainWindow, mainGui.Ui_mainWindow):
                                   "%d %b %y")))
             elif col == 3:
                 self.mylist = sorted(self.mylist, key=lambda tup: getDuration(tup[3]))
+            elif col == 1:
+                self.mylist = sorted(self.mylist, key=lambda tup: getRating(tup[1]))
             else:
                 self.mylist = sorted(self.mylist,
                                      key=operator.itemgetter(col))
@@ -104,6 +178,11 @@ def getDuration(text):
         return 0
     return int(text.split()[0])
 
+def getRating(text):
+    if text == "N/A":
+        return 0
+    return float(text)
+
 
 class WorkerThread(QThread):
     def __init__(self, text, parent=None):
@@ -111,28 +190,20 @@ class WorkerThread(QThread):
         self.name = text
 
     def run(self):
-        for i in self.name:
-            print i
-            print type(i)
-            response = movielookup.finder(i)
-            print response
-            self.emit(SIGNAL("threadDone(QString)"), response)
-        self.emit(SIGNAL("allDone()"))
+        print "Thread started>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+        print self.name
+        response = movielookup.finder(self.name)
+        print response, self.name
+        self.emit(SIGNAL("threadDone(QString)"), response)
+        print "Thread finished>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 
-
-files = []
 
 def get_files(roots):
-    # rv = {}
     rv = []
     for root in roots:
         for cwd, folders, files in os.walk(root):
             for fname in files:
-                # os.path.splitext splits a filename into a tuple like so:
-                # (file_path, extension)
                 if os.path.splitext(fname)[1] in extensions:
-                    # key = filename, value = directory of file
-                    # rv[fname] = cwd
                     rv.append(fname)
 
     if len(rv) == 0:
@@ -183,10 +254,14 @@ extensions = [".3g2", ".3gp", ".asf", ".asx", ".avi", ".flv", ".m4v", ".mov", ".
 def getYear(text):
     return text[-2] + text[-1]
 
-def startMain(names, app):
-    # app = QApplication(sys.argv)
-    print names
-    files.append(names)
-    form1 = MainWindow()
+
+def startMain(names, app2):
+    app = app2
+    try:
+        app = QApplication(sys.argv)
+    except:
+        pass
+    print "names in main", names
+    form1 = MainWindow(files=names)
     form1.show()
     app.exec_()
