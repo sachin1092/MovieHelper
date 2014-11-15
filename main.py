@@ -7,14 +7,14 @@ import time
 import json
 import os
 
-from PySide.QtCore import *
-from PySide.QtGui import *
+from PySide import QtCore
+from PySide import QtGui
 
 import mainGui
 import movielookup
 
 
-class MainWindow(QMainWindow, mainGui.Ui_mainWindow):
+class MainWindow(QtGui.QMainWindow, mainGui.Ui_mainWindow):
 
     files = []
 
@@ -88,7 +88,7 @@ class MainWindow(QMainWindow, mainGui.Ui_mainWindow):
             self.threadcollector.append(WorkerThread(movies.pop()))
             # self.threadcollector[self.counter].connect(self.doThing)
             # self.connect(self.threadcollector[self.counter], SIGNAL("threadDone(QString)"), self.doThing, Qt.DirectConnection)
-            self.threadcollector[self.counter].progress.connect(self.doThing, Qt.QueuedConnection)
+            self.threadcollector[self.counter].progress.connect(self.doThing, QtCore.Qt.QueuedConnection)
             self.threadcollector[self.counter].start()
             print "Starting thread", self.counter
             self.counter += 1
@@ -100,7 +100,7 @@ class MainWindow(QMainWindow, mainGui.Ui_mainWindow):
         if self.table_model is None:
             self.table_model = self.MyTableModel(self, (), self.header)
             self.table_view.setModel(self.table_model)
-            self.table_view.horizontalHeader().setResizeMode(QHeaderView.Stretch)
+            self.table_view.horizontalHeader().setResizeMode(QtGui.QHeaderView.Stretch)
             self.table_view.setSortingEnabled(True)
         jsonvalues = json.loads(text)
         if jsonvalues["Response"] == "True":
@@ -115,23 +115,23 @@ class MainWindow(QMainWindow, mainGui.Ui_mainWindow):
 
         self.startThread(self.getNextFour())
 
-    class MyTableModel(QAbstractTableModel):
+    class MyTableModel(QtCore.QAbstractTableModel):
         def __init__(self, parent, mylist, header, *args):
-            QAbstractTableModel.__init__(self, parent, *args)
+            QtCore.QAbstractTableModel.__init__(self, parent, *args)
             self.mylist = mylist
             self.header = header
 
         def updateTableData(self, tup):
-            self.emit(SIGNAL("layoutAboutToBeChanged()"))
+            self.emit(QtCore.SIGNAL("layoutAboutToBeChanged()"))
             self.mylist.append(tup)
             self.mylist = list(set(self.mylist))
-            self.emit(SIGNAL("layoutChanged()"))
+            self.emit(QtCore.SIGNAL("layoutChanged()"))
 
         def searchData(self, tup):
-            self.emit(SIGNAL("layoutAboutToBeChanged()"))
+            self.emit(QtCore.SIGNAL("layoutAboutToBeChanged()"))
             self.mylist = tup
             self.mylist = list(set(self.mylist))
-            self.emit(SIGNAL("layoutChanged()"))
+            self.emit(QtCore.SIGNAL("layoutChanged()"))
 
 
         def rowCount(self, parent):
@@ -143,19 +143,19 @@ class MainWindow(QMainWindow, mainGui.Ui_mainWindow):
         def data(self, index, role):
             if not index.isValid():
                 return None
-            elif role != Qt.DisplayRole:
+            elif role != QtCore.Qt.DisplayRole:
                 return None
             return self.mylist[index.row()][index.column()]
 
         def headerData(self, col, orientation, role):
-            if orientation == Qt.Horizontal and role == Qt.DisplayRole:
+            if orientation == QtCore.Qt.Horizontal and role == QtCore.Qt.DisplayRole:
                 return self.header[col]
             return None
 
         def sort(self, col, order):
             """sort table by given column number col"""
             print "col", col
-            self.emit(SIGNAL("layoutAboutToBeChanged()"))
+            self.emit(QtCore.SIGNAL("layoutAboutToBeChanged()"))
             if col == 2:
                 self.mylist = sorted(self.mylist, key=lambda tup: time.mktime(
                     time.strptime(tup[2].split()[0] + " " + tup[2].split()[1] + " " + getYear(tup[2].split()[2]),
@@ -168,9 +168,9 @@ class MainWindow(QMainWindow, mainGui.Ui_mainWindow):
                 self.mylist = sorted(self.mylist,
                                      key=operator.itemgetter(col))
 
-            if order == Qt.DescendingOrder:
+            if order == QtCore.Qt.DescendingOrder:
                 self.mylist.reverse()
-            self.emit(SIGNAL("layoutChanged()"))
+            self.emit(QtCore.SIGNAL("layoutChanged()"))
 
 
     header = [' Title ', ' Rating ', ' Released ', ' Runtime ', ' Genre ']
@@ -187,9 +187,9 @@ def getRating(text):
     return float(text)
 
 
-class WorkerThread(QThread):
+class WorkerThread(QtCore.QThread):
 
-    progress = Signal("QString")
+    progress = QtCore.Signal("QString")
 
     def __init__(self, text, parent=None):
         super(WorkerThread, self).__init__(parent)
@@ -261,18 +261,3 @@ extensions = [".3g2", ".3gp", ".asf", ".asx", ".avi", ".flv", ".m4v", ".mov", ".
 def getYear(text):
     return text[-2] + text[-1]
 
-
-# def startMain(names, app):
-#     # app.quit()
-#     # app = app2
-#     # try:
-#     app = QApplication(sys.argv)
-#     # except:
-#     #     pass
-#     print "names in main", names
-#     form1 = MainWindow(files=names)
-#     form1.show()
-#     # try:
-#     sys.exit(app.exec_())
-#     # except:
-#     #     pass

@@ -8,11 +8,10 @@ import sys
 # sip.setapi('QString', 2)
 # sip.setapi('QVariant', 2)
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from PySide import QtCore, QtGui
 
-class droppableLabel(QLabel):
-    fileDropped = pyqtSignal(list)
+class droppableLabel(QtGui.QLabel):
+    fileDropped = QtCore.Signal(list)
 
     def __init__(self, type, parent=None):
         super(droppableLabel, self).__init__(parent)
@@ -27,7 +26,7 @@ class droppableLabel(QLabel):
 
     def dragMoveEvent(self, event):
         if event.mimeData().hasUrls:
-            event.setDropAction(Qt.CopyAction)
+            event.setDropAction(QtCore.Qt.CopyAction)
             event.accept()
 
         else:
@@ -35,7 +34,7 @@ class droppableLabel(QLabel):
 
     def dropEvent(self, event):
         if event.mimeData().hasUrls:
-            event.setDropAction(Qt.CopyAction)
+            event.setDropAction(QtCore.Qt.CopyAction)
             event.accept()
             links = []
             for url in event.mimeData().urls():
@@ -46,9 +45,13 @@ class droppableLabel(QLabel):
         else:
             event.ignore()
 
-class droppableWidget(QWidget):
+class droppableWidget(QtGui.QWidget):
     def __init__(self, parent=None):
         super(droppableWidget, self).__init__(parent)
+
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap("ic_launcher.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.setWindowIcon(icon)
 
         self.setWindowTitle("Movie Helper")
 
@@ -59,13 +62,13 @@ class droppableWidget(QWidget):
 
         self.label = droppableLabel(self)
         self.label.fileDropped.connect(self.on_label_fileDropped)
-        self.label.setText(QApplication.translate("QWidget", "Drop a folder\n"
+        self.label.setText(QtGui.QApplication.translate("QWidget", "Drop a folder\n"
 "or\n"
-"Click button to select a folder.", None, QApplication.UnicodeUTF8))
+"Click button to select a folder.", None, QtGui.QApplication.UnicodeUTF8))
         # self.label.setMinimumSize(QSize(40, 100))
-        self.label.setMinimumSize(QSize(450, 450))
-        self.label.setMaximumSize(QSize(450, 450))
-        font = QFont()
+        self.label.setMinimumSize(QtCore.QSize(450, 450))
+        self.label.setMaximumSize(QtCore.QSize(450, 450))
+        font = QtGui.QFont()
         font.setFamily("Roboto")
         font.setPointSize(18)
         font.setWeight(75)
@@ -81,12 +84,12 @@ class droppableWidget(QWidget):
 "")
 
 
-        self.label.setAlignment(Qt.AlignCenter)
+        self.label.setAlignment(QtCore.Qt.AlignCenter)
 
-        self.folderButton = QPushButton(self)
+        self.folderButton = QtGui.QPushButton(self)
         self.folderButton.setObjectName("folderButton")
         self.folderButton.setMinimumHeight(50)
-        self.folderButton.setText(QApplication.translate("QWidget", "Select Folder", None, QApplication.UnicodeUTF8))
+        self.folderButton.setText(QtGui.QApplication.translate("QWidget", "Select Folder", None, QtGui.QApplication.UnicodeUTF8))
 
         self.folderButton.setStyleSheet("QPushButton{\n"
 "border: 1px;\n"
@@ -104,20 +107,20 @@ class droppableWidget(QWidget):
 "background-color: #9e9e9e;\n"
 "}")
 
-        self.verticalLayout = QVBoxLayout(self)
+        self.verticalLayout = QtGui.QVBoxLayout(self)
         self.verticalLayout.addWidget(self.label)
         self.verticalLayout.addWidget(self.folderButton)
-        self.verticalLayout.setMargin(10)
+        # self.verticalLayout.setMargin(10)
 
         self.folderButton.clicked.connect(self.fbuttonclicked)
 
     def fbuttonclicked(self):
-        file = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
+        file = str(QtGui.QFileDialog.getExistingDirectory(self, "Select Directory"))
         self.on_label_fileDropped([file])
         print file
         print type(file)
 
-    @pyqtSlot(list)
+    # @QtCore.pyqtSlot(list)
     def on_label_fileDropped(self, fileNames):
         droppedFiles = [    fileName
                             for fileName in fileNames
@@ -125,12 +128,12 @@ class droppableWidget(QWidget):
                             ]
 
         if droppedFiles:
-            keyModifiers = QApplication.keyboardModifiers()
-            if keyModifiers == Qt.ShiftModifier:
+            keyModifiers = QtGui.QApplication.keyboardModifiers()
+            if keyModifiers == QtCore.Qt.ShiftModifier:
                 print "SHIFT"
                 formatter = "\n"                
 
-            elif keyModifiers == Qt.ControlModifier:
+            elif keyModifiers == QtCore.Qt.ControlModifier:
                 print "CTRL"
                 formatter = ","
 
@@ -166,27 +169,11 @@ class droppableWidget(QWidget):
         self.form2 = main.MainWindow(files=names)
         self.form2.show()
 
-
-
-# class MainWindow(QMainWindow, mainGui.Ui_mainWindow):
-#
-#     def __init__(self, parent=None):
-#         super(MainWindow, self).__init__(parent)
-#         self.setupUi(self)
-
-
-# def startDialog():
-#     app = QApplication(sys.argv)
-#     main = droppableWidget()
-#     main.show()
-#     # app.exec_()
-#     sys.exit(app.exec_())
-
-app = QApplication(sys.argv)
-main = droppableWidget()
-main.show()
-sys.exit(app.exec_())
-# app.exec_()
+if __name__ == "__main__":
+    app = QtGui.QApplication(sys.argv)
+    main = droppableWidget()
+    main.show()
+    sys.exit(app.exec_())
 
 
 

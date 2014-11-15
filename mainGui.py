@@ -8,6 +8,7 @@
 # WARNING! All changes made in this file will be lost!
 
 from PySide import QtCore, QtGui
+# import PySide
 
 class Ui_mainWindow(object):
     def setupUi(self, mainWindow):
@@ -23,10 +24,11 @@ class Ui_mainWindow(object):
         font.setFamily("Roboto")
         mainWindow.setFont(font)
         mainWindow.setAcceptDrops(True)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap("ic_launcher.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        mainWindow.setWindowIcon(icon)
         mainWindow.setAutoFillBackground(False)
-        mainWindow.setStyleSheet("QMainWindow #mainWindow {\n"
-"background-color:#ffffff\n"
-"}")
+        mainWindow.setStyleSheet("QMainWindow #mainWindow {\nbackground-color:#ffffff\n}")
         mainWindow.setUnifiedTitleAndToolBarOnMac(True)
         self.centralWidget = QtGui.QWidget(mainWindow)
         self.centralWidget.setObjectName("centralWidget")
