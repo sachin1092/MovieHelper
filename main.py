@@ -40,15 +40,21 @@ class MainWindow(QtGui.QMainWindow, mainGui.Ui_mainWindow):
         self.startThread(self.getNextFour())
 
     def perform_search(self):
+        print "Performing search"
         listtoadd = []
         text = self.leSearch.text()
         for tup in self.completelist:
             check = ""
             for t in tup:
                 check += t + " "
-            check = str(check).lower()
+            print "tup is", check
+            try:
+                check = str(check).lower()
+            except UnicodeEncodeError:
+                pass
             if text in check:
                 listtoadd.append(tup)
+        print "list to add is", listtoadd
         self.table_model.searchData(listtoadd)
 
 
